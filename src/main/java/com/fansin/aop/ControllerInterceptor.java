@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -76,30 +77,35 @@ public class ControllerInterceptor {
         String name = method.getName();
 
         //按照顺序输出参数
-        Set<Object> allParams = new LinkedHashSet<>();
+        Map allParams = new LinkedHashMap<>();//http中的request是LinkedHashMap
         System.out.println("请求执行方法 "+name);
 
         //保存返回结果
         Object result = null;
-
+        pjp.getArgs();
         //获取拦截参数
         Object[] args = pjp.getArgs();
         for (Object arg : args) {
-
+            System.out.println(arg);
             //
             if(arg instanceof Map<?,?>){
                 //保留参数
-                allParams.add((Map<String,Object>)arg);
+                allParams.putAll((Map<String,Object>)arg);
             }else if ( arg instanceof HttpServletRequest){
                 HttpServletRequest request = (HttpServletRequest) arg;
-                System.out.println("请求参数:"+request.getRequestURL()+request.getMethod());
+                System.out.println("请求参数:"+request.getRequestURL()+" "+request.getMethod());
+                System.out.println("对url进行验证!");
                 //把参数保存
-                allParams.add(request.getParameterMap());
+                allParams.putAll(request.getParameterMap());
             }else{
                 //
-                allParams.add("其他参数!");
+                allParams.put(arg,new Object());
             }
         }
+
+//        for (Object key : allParams.entrySet()) {
+//            System.out.println(key+" >>> "+allParams.get(key));
+//        }
         try {
             //正常执行结果
             result = pjp.proceed();

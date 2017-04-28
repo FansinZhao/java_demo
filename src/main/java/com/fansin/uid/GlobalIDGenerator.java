@@ -15,7 +15,7 @@ public class GlobalIDGenerator {
     /**
      * 16进制
      * timestamp + machine + pid + inc
-     * 11          8         6     8     位
+     * 8          8          7     8     位
      *
      * */
 
@@ -40,7 +40,7 @@ public class GlobalIDGenerator {
      * 时间戳
      * */
     public String getTimeStamp(){
-        return Long.toHexString(System.currentTimeMillis());
+        return Long.toHexString(System.currentTimeMillis()/1000);
     }
 
 

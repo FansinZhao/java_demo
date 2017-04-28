@@ -11,6 +11,27 @@ public class DemoApplicationTests {
 
 	@Test
 	public void contextLoads() {
+
+
+		System.out.println(trycatch());
+
+	}
+
+	public static void main(String[] args) {
+		System.out.println(trycatch());
+	}
+
+
+	public static String trycatch(){
+
+		try{
+			return "b";
+		}catch (Exception e){
+			return "c";
+		}finally {
+			System.out.println("A");
+		}
+
 	}
 
 }

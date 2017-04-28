@@ -80,11 +80,11 @@ public class MySerializable {
         }
 
         ObjectInputStream oin = new ObjectInputStream(new FileInputStream(out));
-        SignedObject seal = (SignedObject) oin.readObject();
+        SignedObject signedObject1 = (SignedObject) oin.readObject();
         //解密
-        if (seal.verify(publicKey, signingEngine)) {
+        if (signedObject1.verify(publicKey, signingEngine)) {
             System.out.println("验证签名成功");
-            Object o = seal.getObject();
+            Object o = signedObject1.getObject();
             System.out.println(o);
         }
         oin.close();
