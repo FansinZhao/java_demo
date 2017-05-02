@@ -1,5 +1,6 @@
 package com.fansin.io;
 
+import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
 
@@ -372,8 +373,84 @@ public class InputStreamAndOutputStreamDemo {
         System.out.println("----------------------------------------------");
         System.out.println("gzip常与tar一块使用");
         System.out.println("apache tool下的 TarInputStream/TarOutputStream");
-        //TODO
-//        TarOutputStream
+        String tarfile = "tarFile.tar";
+        try (
+                FileOutputStream fileOutputStream = new FileOutputStream(tarfile);
+                TarOutputStream tarOutputStream = new TarOutputStream(fileOutputStream);
+                ) {
+            System.out.println("长文件模式 默认不允许,可以选择截断,或保存长文件名");
+            tarOutputStream.setLongFileMode(TarOutputStream.LONGFILE_ERROR);
+            System.out.println("开启debug模式");
+            tarOutputStream.setDebug(true);
+            System.out.println("TarBuffer debug模式");
+            tarOutputStream.setBufferDebug(true);
+            System.out.println("大文件模式 不能大于8G");
+            tarOutputStream.setBigNumberMode(TarOutputStream.BIGNUMBER_ERROR);
+            System.out.println("使用pax头.pax可以压缩单个文件超过8G");
+            tarOutputStream.setAddPaxHeadersForNonAsciiNames(false);
+            File file1 = new File(dataStream);
+            TarEntry tarEntry = new TarEntry(file1);
+            tarOutputStream.putNextEntry(tarEntry);
+            tarEntry.setSize(file1.length());
+            FileInputStream fileInputStream = new FileInputStream(file1);
+            byte[] bytes1 = new byte[1];
+            while (fileInputStream.read(bytes1) != -1){
+                tarOutputStream.write(bytes1);
+            }
+            tarOutputStream.closeEntry();
+            File file2 = new File(checkedStream);
+            TarEntry tarEntry1 = new TarEntry(file2);
+            tarOutputStream.putNextEntry(tarEntry1);
+            tarEntry.setSize(file2.length());
+            FileInputStream fileInputStream1 = new FileInputStream(file2);
+            byte[] bytes2 = new byte[1];
+            while (fileInputStream1.read(bytes2) != -1){
+                tarOutputStream.write(bytes2);
+            }
+            tarOutputStream.closeEntry();
+            System.out.println("记录数:"+tarOutputStream.getRecordSize());
+            tarOutputStream.finish();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        try (
+                FileInputStream fileInputStream = new FileInputStream(tarfile);
+                TarInputStream tarInputStream = new TarInputStream(fileInputStream)
+        ) {
+            System.out.println("读取tar包");
+            System.out.println("系统记录大小:"+tarInputStream.getRecordSize());
+            System.out.println("剩余记录数:"+tarInputStream.available());
+            System.out.println("不支持mark/reset:"+tarInputStream.markSupported());
+            System.out.println("开启debug模式");
+            tarInputStream.setDebug(true);
+            File file2 = new File(checkedStream);
+            TarEntry tarEntry1 = new TarEntry(file2);
+            System.out.println("是否可以读取文件:"+tarInputStream.canReadEntryData(tarEntry1));
+            while (true){
+                TarEntry tarEntry = tarInputStream.getNextEntry();
+                if (tarEntry==null){
+                    System.out.println("空entry");
+                    break;
+                }
+                System.out.println("文件名:"+tarEntry.getName());
+                System.out.println("size:"+tarEntry.getSize());
+                System.out.println("real size:"+tarEntry.getRealSize());
+                byte bs[] = new byte[1024];
+                int length =0;
+                while ((length =tarInputStream.read(bs) )!= -1){
+                    System.out.println(new String(bs));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         System.out.println("---------------ZIPOutputStream/ZIPInputStream---------------");
         String zipFile = "中文.zip";

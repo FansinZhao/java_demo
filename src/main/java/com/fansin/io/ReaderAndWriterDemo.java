@@ -5,7 +5,12 @@ import sun.security.action.GetPropertyAction;
 import java.io.*;
 import java.security.AccessController;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by zhaofeng on 17-4-25.
@@ -94,7 +99,8 @@ public class ReaderAndWriterDemo {
 
         try (
                 FileReader fileReader = new FileReader(bufferFile);
-                BufferedReader bufferedReader = new BufferedReader(fileReader)
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+
         ) {
             System.out.println("BufferedReader 并没有继承InputStream 是否支持mark:"+bufferedReader.markSupported());
             System.out.println("reader是否准备好:"+bufferedReader.ready());
@@ -113,6 +119,47 @@ public class ReaderAndWriterDemo {
                 }
                 System.out.println(line);
             }
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("-----------------LineNumberReader-------------------");
+
+        try (
+                FileReader fileReader = new FileReader(bufferFile);
+                LineNumberReader lineNumberReader = new LineNumberReader(fileReader);
+
+        ) {
+            System.out.println("LineNumberReader 并没有继承InputStream 是否支持mark:"+lineNumberReader.markSupported());
+            System.out.println("reader是否准备好:"+lineNumberReader.ready());
+            System.out.println("mark(1),参数生效,最小为1");
+            lineNumberReader.mark(1);
+            System.out.println("显示linenumber");
+            while (true){
+                System.out.println("当前行号:"+lineNumberReader.getLineNumber());
+                String line = lineNumberReader.readLine();
+                if (line == null || line.length() == 0){
+                    break;
+                }
+                System.out.println(lineNumberReader.getLineNumber()+" "+line);
+                if (lineNumberReader.getLineNumber() == 2){
+                    lineNumberReader.setLineNumber(10);
+                    System.out.println("设置当前行号为10,后续的行号将以此为累加");
+                    System.out.println(lineNumberReader.getLineNumber());
+                }
+            }
+            System.out.println("常规读取!");
+            char[] chars = new char[10];
+            int length = lineNumberReader.read(chars);
+            System.out.println(new String(chars)+" 行数:"+length);
+            lineNumberReader.reset();
+            System.out.println("新功能读取一行,readLine");
+
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -189,7 +236,6 @@ public class ReaderAndWriterDemo {
                     pushbackReader.read(cs);
                     System.out.println("读取一对:"+new String(cs));
                 }
-
             }
 
         } catch (IOException e) {
@@ -197,9 +243,131 @@ public class ReaderAndWriterDemo {
         }
 
 
+        System.out.println("-------------StringWriter/StringReader----------------");
+        try (StringWriter stringWriter = new StringWriter()) {
+            System.out.println("可以像使用StringBuffer一样使用");
+            stringWriter.append("aaa").append("|bbbb");
+            stringWriter.write("也可以像writer一样使用");
+            System.out.println("buffer类型"+stringWriter.getBuffer().getClass().getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (StringReader stringReader = new StringReader("一条消息!")) {
+            System.out.println("支持mark/reset:"+stringReader.markSupported());
+            System.out.println("检查字节流是否正常:"+stringReader.ready());
+            stringReader.mark(0);
+            char chars[] = new char[1];
+            while (stringReader.read(chars) != -1){
+                System.out.println(new String(chars));
+            }
+            stringReader.reset();
+            System.out.println("reset后还可以重头在读取");
+            while (stringReader.read(chars) != -1){
+                System.out.println(new String(chars));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        System.out.println("--------------Writer独有 PrintWriter-----------------");
+        try (
+                StringWriter stringWriter = new StringWriter();
+                PrintWriter printWriter = new PrintWriter(stringWriter, true)) {
+            System.out.println("除了可以直接使用字符外,基本等同PrintWriter");
+            printWriter.format("%1$TY-%1$Tm-%1$Td %1$tH:%1$tM:%1$tS",new Date());
+            printWriter.printf("%1$tF %1$tR",new Date());
+            printWriter.println("字符串");
+            printWriter.println(true);
+            printWriter.println('a');
+            printWriter.println(11111);
+            printWriter.println(11.111);
+            printWriter.append("只能追加字符串");
+            System.out.println("有无异常:"+printWriter.checkError());
+            System.out.println("写入内容:"+stringWriter.toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         System.out.println("-------------PipedReader/PipedWriter----------------");
+        System.out.println("同PipedInputStream/PipedOutputStream");
         PipedWriter pipedWriter = new PipedWriter();
         PipedReader pipedReader = new PipedReader();
+        ExecutorService service = Executors.newFixedThreadPool(2);
+        try {
+            service.execute(new Thread(new Receiver(pipedReader,pipedWriter)));
+            service.execute(new Thread(new Sender(pipedWriter)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        service.shutdown();
 
+
+
+    }
+    static class Sender implements Runnable{
+
+        private PipedWriter pipedWriter;
+
+        public Sender(PipedWriter pipedWriter) {
+            this.pipedWriter = pipedWriter;
+        }
+
+        @Override
+        public void run() {
+            while (true){
+                System.out.println("写入消息>>");
+                String msg = String.format("当前日期:%1$tF %1$tT",new Date());
+                try {
+                    pipedWriter.write(msg);
+                    Thread.sleep(1000l);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    static class Receiver implements Runnable{
+
+        private PipedReader pipedReader;
+
+        public Receiver(PipedReader pipedReader,PipedWriter pipedWriter) throws IOException {
+            this.pipedReader = pipedReader;
+            pipedWriter.connect(pipedReader);
+        }
+
+        /**
+         * When an object implementing interface <code>Runnable</code> is used
+         * to create a thread, starting the thread causes the object's
+         * <code>run</code> method to be called in that separately executing
+         * thread.
+         * <p>
+         * The general contract of the method <code>run</code> is that it may
+         * take any action whatsoever.
+         *
+         * @see Thread#run()
+         */
+        @Override
+        public void run() {
+            while (true){
+                char chars[] = new char[1024];
+                try {
+                    int length = pipedReader.read(chars);
+                    if (length == -1){
+                        Thread.sleep(1000l);
+                    }
+                    System.out.println("接收到消息:"+new String(chars)+" "+length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
