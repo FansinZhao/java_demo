@@ -48,19 +48,11 @@ public class ProxyDemo {
         UserLogin userLogin = new CglibDynamicHandler<UserLogin>().newInstance(UserLogin.class);
         userLogin.login("cglib","123456");
         userLogin.logout();
-//        CglibDynamicHandler<UserLogin> userLogin1 = new CglibDynamicHandler<UserLogin>(real);
-//        userLogin1.login("cglib","123456");
-//        userLogin1.logout();
     }
 }
 
 class CglibDynamicHandler<T> implements MethodInterceptor{
     private Enhancer enhancer = new Enhancer();
-    private Object object;
-
-    public CglibDynamicHandler(Object object) {
-        this.object = object;
-    }
 
     public T newInstance(Class<T> clazz) {
         enhancer.setSuperclass(clazz);
@@ -68,9 +60,6 @@ class CglibDynamicHandler<T> implements MethodInterceptor{
         return (T)enhancer.create();
     }
 
-    public  CglibDynamicHandler(){
-
-    }
 
     /**
      * 
@@ -85,12 +74,7 @@ class CglibDynamicHandler<T> implements MethodInterceptor{
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
         TimeInterval timeInterval = DateUtil.timer();
         Object result;
-        if (object == null){
-            result = proxy.invokeSuper(obj,args);
-        }else {
-            //jdk默认代理
-            result = method.invoke(object,args);
-        }
+        result = proxy.invokeSuper(obj,args);
         System.out.println("timeInterval.intervalSecond() = " + timeInterval.intervalSecond());
         System.out.println("result = " + result);
         return result;
