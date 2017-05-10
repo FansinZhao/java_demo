@@ -19,6 +19,8 @@ public class ArrayListDemo {
         ArrayList<String> list = new ArrayList<>();
         int size = list.size();
 
+        System.out.println("可以插入null");
+        list.add(null);
         for (int i = 0; i < 100; i++) {
             list.add(i+"");
             if (list.size() > size){

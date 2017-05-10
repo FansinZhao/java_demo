@@ -152,6 +152,20 @@ public class ListDemo {
         System.out.println(linkedList.getLast());
 
         CopyOnWriteArrayList copyOnWriteArrayList = new CopyOnWriteArrayList();
+        copyOnWriteArrayList.add("aaa");
+        copyOnWriteArrayList.add("bbb");
+        copyOnWriteArrayList.add("abc");
+        arrayList.addAll(1,list);//不是add
+        HashSet map1 = new HashSet();
+        map1.add("m01");
+        map1.add("m02");
+        map1.add("m03");
+        copyOnWriteArrayList.addAll(1,map1);
+        for (int i = 0; i < copyOnWriteArrayList.size(); i++) {
+            String s = (String) copyOnWriteArrayList.get(i);
+            System.out.println("s = " + s);
+        }
+
     }
 
 

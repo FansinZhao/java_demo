@@ -10,6 +10,13 @@ public class Base {
     public class Value{
         private int i = 100;
 
+        public int getI() {
+            return i;
+        }
+
+        public void setI(int i) {
+            this.i = i;
+        }
     }
 
     @Test
@@ -30,6 +37,17 @@ public class Base {
         v1.i++;
         Assert.assertEquals(102,v.i);
         Assert.assertEquals(102,v1.i);
+
+        Value vv = null;
+        change(vv);
+        System.out.println("null引用无法传递!"+vv.getI());
+    }
+
+    public void change(Value value){
+        if (value == null){
+            value = new Value();
+            value.setI(222);
+        }
     }
 
     @Test

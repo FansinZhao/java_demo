@@ -1,9 +1,16 @@
 package com.fansin.regex;
 
 import com.fansin.reflect.B;
+import com.xiaoleilu.hutool.lang.Assert;
+import com.xiaoleilu.hutool.util.CollectionUtil;
+import com.xiaoleilu.hutool.util.RandomUtil;
+import com.xiaoleilu.hutool.util.ReUtil;
+import com.xiaoleilu.hutool.util.StrUtil;
 
+import javax.validation.constraints.AssertTrue;
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -138,7 +145,7 @@ public class RegexDemo {
     }
     public static void strMatch1(){
         System.out.println("字符串匹配....");
-        String str = "AAbABbBAAAaBdBcBA";
+        String str = "AAbABbBAAAaBdBAcBA";
         //匹配
         System.out.println(str.matches("([a-z]?[A-Z])[a-z]([A-Z]).*"));
         System.out.println(str.matches("A(?:b|B|a).*"));
@@ -174,51 +181,43 @@ public class RegexDemo {
 
 
         pattern();
+        System.out.println("去除驼峰标记");
+
+        System.out.println("smartReplace:"+ ReUtil.smartReplace(str,"(?<first>[A-Z])[a-z]\\k<first>",""));
+        pressTestSmartReplace();
     }
 
+    public static void pressTestSmartReplace(){
+        String regex = "(?<first>[A-Z])[a-z]\\k<first>";
+        String replacement = "";
+        for (int i = 0; i < 10; i++) {
+            String result = ReUtil.smartReplace(randomString(),regex,replacement);
+            String validate = result.replaceFirst(regex,"$");
+            Assert.isTrue(result.equals(validate),"测试不通过!"+result);
+            assert result.equals(validate):"测试不通过!"+result;
+        }
+        System.out.println("测试通过!");
+    }
 
-    public static Map<Boolean,String> cleanCamel(String str,Map<Boolean,String> map){
-        if(map == null){
-            map = new HashMap<>();
+    public static String randomString(){
+        List randomList = CollectionUtil.newArrayList("A","B","C","a","b","c");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i <15; i++) {
+            stringBuilder.append(RandomUtil.randomEle(randomList));
         }
-        if(map.containsKey(true)){
-            System.out.println("最终处理后文件:"+map.get(true));
-            return map;
-        }else{
-            Pattern pattern = Pattern.compile("([A-Z])[a-z]\\1+");
-            Matcher matcher = pattern.matcher(str);
-            if(!matcher.lookingAt()){
-                map.put(true,str);
-                return map;
-            }
-//            matcher.reset();
-            System.out.println("groupCount="+matcher.groupCount());
-            StringBuffer sb = new StringBuffer();//替换匹配字符
-            while (matcher.find()){
-//            匹配到字符串
-                System.out.println("匹配到字符串:"+matcher.group(0)+" 符合规则,替换掉");
-                matcher.appendReplacement(sb,"");//配合matcher.appendTail()
-            }
-            matcher.appendTail(sb);//将未匹配值追加到缓存
-            System.out.println("处理后文件:"+sb.toString());
-            map.put(false,sb.toString());
-            cleanCamel(str,map);
-        }
-        return null;
+        return stringBuilder.toString();
     }
 
     /**
      *
      * 匹配模式
      * (pattern) 匹配pattern内容,并可以捕获matcher.group(1)
-     * (?:pattern) 匹配pattern,但是不捕获存储到组,在or和|很有效果
-     * (?=pattern) 匹配pattern前面的字符或组,但是不捕获pattern,查找pattern前面的字符/组
-     * /TODO 好像不生效
-     * (?<=pattern) 匹配pattern后面的字符或组,但是不捕获pattern,查找pattern前面的字符/组
-     * //TODO 好像不生效
-     * (?!pattern) 匹配不满足pattern前面的字符或组,但是不捕获pattern,查找非pattern前面的字符/组
-     * /TODO 好像不生效
-     * (?<!pattern) 匹配不满足pattern后面的字符或组,但是不捕获pattern,查找非pattern前面的字符/组
+     * X(?:pattern) 匹配pattern,但是不捕获存储到组,在or和|很有效果
+     * X(?=pattern) 匹配pattern前面的字符或组,但是不捕获pattern,查找pattern前面的字符/组
+     * (?<=pattern)X 匹配pattern后面的字符或组,但是不捕获pattern,查找pattern前面的字符/组
+     * (?!pattern)X 匹配不满足pattern前面的字符或组,但是不捕获pattern,查找非pattern前面的字符/组
+     * (?<!pattern)X 匹配不满足pattern后面的字符或组,但是不捕获pattern,查找非pattern前面的字符/组
+     * X(?>pattern) 独立分组,不对pattern进行回溯
      *
      *
      *
@@ -233,38 +232,105 @@ public class RegexDemo {
         }
         p = Pattern.compile("a(?:o|n)");//
         m = p.matcher(str);
+        System.out.println("str = " + str);
         while(m.find()){
-            System.out.println("匹配到2个:但是不能使用组:"+m.group(0));//无法使用组,group(1)会报越界错误
+            System.out.println("X(?:X|Y)匹配到2个:但是不能使用组:"+m.group(0));//无法使用组,group(1)会报越界错误
         }
-
-        p = Pattern.compile("a.*(?=Zhao)");//?非贪婪模式
+        p = Pattern.compile("(?:a|c)o");//
+        m = p.matcher(str);
+        System.out.println("str = " + str);
+        while(m.find()){
+            System.out.println("(?:X|Y)X匹配到2个:但是不能使用组:"+m.group(0));//无法使用组,group(1)会报越界错误
+        }
+        p = Pattern.compile("a.*(?=Zhao)");//?贪婪模式
 
         m = p.matcher(str);
+        System.out.println("str = " + str);
         while(m.find()){
-            System.out.println("[贪婪模式-匹配最后一个]匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
+            System.out.println("(?=X)[贪婪模式-匹配最后一个]匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
         }
 
         p = Pattern.compile("a.*?(?=Zhao)");//?非贪婪模式
         m = p.matcher(str);
+        System.out.println("str = " + str);
         while(m.find()){//循环匹配
-            System.out.println("[非贪婪模式-匹配第一个]匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
+            System.out.println("(?=X)[非贪婪模式-匹配第一个]匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
         }
 
-        p = Pattern.compile("a.*?(?<=Zhao)");//?非贪婪模式
+        p = Pattern.compile("fansin(?=Zhao)");//?非贪婪模式
         m = p.matcher(str);
+        System.out.println("str = " + str);
         while(m.find()){//循环匹配
-            System.out.println("反向[非贪婪模式-匹配第一个]匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
+            System.out.println("Y(?=X)[非贪婪模式-匹配第一个]匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
         }
 
-        p = Pattern.compile("fansin.*?(?!Zhao)");//?非贪婪模式
+        p = Pattern.compile("(?=fansinZhao)fansin");//?非贪婪模式
         m = p.matcher(str);
+        System.out.println("str = " + str);
         while(m.find()){//循环匹配
-            System.out.println("[非贪婪模式-匹配第一个]不匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
+            System.out.println("(?=X)Y[非贪婪模式-匹配第一个]匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
         }
-        p = Pattern.compile("fansin.*?(?<!Zhao)");//?非贪婪模式
+
+        p = Pattern.compile("fansin(?!Zhao)\\w+");//?非贪婪模式
         m = p.matcher(str);
+        System.out.println("str = " + str);
         while(m.find()){//循环匹配
-            System.out.println("反向[非贪婪模式-匹配第一个]不匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
+            System.out.println("(?!X)[贪婪模式-匹配第一个]不匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
+        }
+
+        p = Pattern.compile("(?<=fansin)Zhao");//?贪婪模式
+        m = p.matcher(str);
+        System.out.println("str = " + str);
+        while(m.find()){//循环匹配
+            System.out.println("(?<=X)Y反向[贪婪模式-匹配第一个]匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
+        }
+
+        p = Pattern.compile("(?<!fansin)Zhao");//?非贪婪模式
+        m = p.matcher(str);
+        System.out.println("str = " + str);
+        while(m.find()){//循环匹配
+            System.out.println("(?<!X)Y反向[贪婪模式-匹配第一个]不匹配表达式前面的内容"+m.group(0));//无法使用组,group(1)会报越界错误
+        }
+        System.out.println("X(?>X) 等价与 抢占式匹配模式,所以表达式后面不能有X");
+        //fansinZhao come on Zhao fansinz
+        p = Pattern.compile("fansin(?>Zhao|ZHAo)");//?非贪婪模式
+        m = p.matcher(str);
+        System.out.println("str = " + str);
+        while(m.find()){//循环匹配
+            System.out.println("X(?>X)当匹配不匹配X时,阻止回溯,立即失败"+m.group(0));//无法使用组,group(1)会报越界错误
+        }
+        p = Pattern.compile("fansin(?>Zh|Zhao|zhao)");//?非贪婪模式
+        m = p.matcher(str);
+        System.out.println("str = " + str);
+        while(m.find()){//循环匹配
+            System.out.println("(?>X)当匹配不匹配X时,阻止回溯,立即失败"+m.group(0));//无法使用组,group(1)会报越界错误
+        }
+        p = Pattern.compile("fansin(?>.*)z");//?非贪婪模式
+        m = p.matcher(str);
+        System.out.println("str = " + str);
+        while(m.find()){//循环匹配
+            System.out.println("(?>X)当匹配不匹配X时,阻止回溯,立即失败"+m.group(0));//无法使用组,group(1)会报越界错误
+        }
+     p = Pattern.compile("\\b(?>integer|insert|in)\\b");//
+            m = p.matcher("insert");
+            System.out.println("str = insert");
+            while(m.find()){//循环匹配
+                System.out.println("(?>X)当匹配不匹配X时,阻止回溯,立即失败"+m.group(0));//无法使用组,group(1)会报越界错误
+            }
+
+        p = Pattern.compile("(?>in|insert|integer)");//
+        m = p.matcher("insert");
+        System.out.println("str = insert");
+        while(m.find()){//循环匹配
+            System.out.println("(?>X)当匹配不匹配X时,阻止回溯,立即失败"+m.group(0));//无法使用组,group(1)会报越界错误
+        }
+
+        //\b 边界,限定了全字匹配
+        p = Pattern.compile("\\b(?>in|insert|integer)\\b");//
+        m = p.matcher("insert");
+        System.out.println("str = insert");
+        while(m.find()){//循环匹配
+            System.out.println("(?>X)当匹配不匹配X时,阻止回溯,立即失败"+m.group(0));//无法使用组,group(1)会报越界错误
         }
 
         chars();

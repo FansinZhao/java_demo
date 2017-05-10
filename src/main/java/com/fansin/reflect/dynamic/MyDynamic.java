@@ -48,7 +48,7 @@ public class MyDynamic {
     public static void reflect() throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, MalformedURLException, NoSuchMethodException {
         //拿到class文件
 //        File  f = new File("/home/zhaofeng");
-////        File  f = new File("target/classes/com/fansin/reflect/dynamic/");
+////        File  f = new File("target/classes/com.fansin.serviceloader.AbstractFactory/fansin/reflect/dynamic/");
 //        System.out.println(f.toURI().toURL());
 //        URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{f.toURI().toURL()});
 //        classLoader.loadClass("Hello");
