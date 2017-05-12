@@ -1,9 +1,11 @@
 package com.fansin.base;
 
+import java.io.Serializable;
+
 /**
  * Created by zhaofeng on 17-4-11.
  */
-public class Base {
+public class Base implements Serializable{
 
     public static void main(String[] args) {
         int i = 170;

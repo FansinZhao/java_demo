@@ -22,8 +22,12 @@ public class ReplicationDemo {
      *  @see com.mysql.jdbc.FailoverConnectionProxy
      *  @see com.mysql.jdbc.ConnectionPropertiesImpl
      */
-    private static String URL="jdbc:mysql:replication://172.17.0.3:3306,172.17.0.4:3306,172.17.0.5:3306/test?" +
+
+//    private static String URL="jdbc:mysql:replication://172.17.0.3:3306,172.17.0.4:3306,172.17.0.5:3306/test?" +
+//            "roundRobinLoadBalance=true&&replicationConnectionGroup=replication&replicationEnableJMX=true";
+    private static String URL="jdbc:mysql://(master)(172.17.0.3:3306),(master)(172.17.0.4:3306),(slave)(172.17.0.5:3306)/test?" +
             "roundRobinLoadBalance=true&&replicationConnectionGroup=replication&replicationEnableJMX=true";
+
 
     public static void main(String[] args) {
         TraceThreadPoolExecutor poolExecutor = new TraceThreadPoolExecutor(3,3,0, TimeUnit.SECONDS,new LinkedBlockingDeque<>());
