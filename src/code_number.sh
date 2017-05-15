@@ -1,2 +1,3 @@
+#!/usr/bin/env bash
 #
-fined -name *.java -print | xargs wc -l
+find -name *.java -print | xargs wc -l
