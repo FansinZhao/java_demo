@@ -7,6 +7,7 @@ import java.util.Iterator;
  * Created by zhaofeng on 17-5-15.
  */
 public class IteratorDemo {
+
     /*
     迭代子模式:
     又称游标模式,顺序访问对象,而不用暴露内部表象.
