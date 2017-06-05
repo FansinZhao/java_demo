@@ -53,11 +53,13 @@ class New implements ThreadState{
     @Override
     public void handle(StateContent content) {
         System.out.print("new新建--->");
-        content.setState(new Runnable());
+        content.setState(new RunnableState());
         content.request();
     }
 }
-class Runnable implements ThreadState{
+
+//影响Runnable接口使用
+class RunnableState implements ThreadState{
     @Override
     public void handle(StateContent content) {
         System.out.print("runnable就绪状态---->OS获取cpu--->");
@@ -72,7 +74,7 @@ class Running implements ThreadState{
         switch (RandomUtil.randomInt(0,5)){
             case 0:
                 System.out.print("Thread.yield()让出cpu--->");
-                content.setState(new Runnable());
+                content.setState(new RunnableState());
                 content.request();
                 break;
             case 1:
@@ -108,7 +110,7 @@ class Blocked implements ThreadState{
     @Override
     public void handle(StateContent content) {
         System.out.println("Thread.sleep()结束或者t2线程完成或者IO读取完毕--->");
-        content.setState(new Runnable());
+        content.setState(new RunnableState());
         content.request();
     }
 }
@@ -131,7 +133,7 @@ class Suspend implements ThreadState{
     @Override
     public void handle(StateContent content) {
         System.out.println("Thread.resume()--->");
-        content.setState(new Runnable());
+        content.setState(new RunnableState());
         content.request();
     }
 }
@@ -140,7 +142,7 @@ class LockPool implements ThreadState{
     @Override
     public void handle(StateContent content) {
         System.out.println("释放监视器--->");
-        content.setState(new Runnable());
+        content.setState(new RunnableState());
         content.request();
     }
 }

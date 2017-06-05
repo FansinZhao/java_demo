@@ -9,10 +9,6 @@ import java.util.concurrent.*;
 public class Others {
 
     public static void main(String[] args) throws InterruptedException {
-        //信号量
-        semaphore();
-        //cutdownlaucher
-        countdwonlatch();
         //cyc
         cycBarrier();
         //blockedquenue
@@ -112,11 +108,6 @@ public class Others {
 //                solders[0].interrupt();//会报异常!
             }
         }
-
-
-
-
-
     }
 
     static ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<String>(5);
@@ -155,55 +146,6 @@ public class Others {
 
     }
 
-    static CountDownLatch latch = new CountDownLatch(10);
-    public static void countdwonlatch() throws InterruptedException {
-        ExecutorService service = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 10; i++) {
-            service.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep((new Random().nextInt(10))*1000);
-                        System.out.println(Thread.currentThread().getId() + "发射火箭准备完成....");
-                        latch.countDown();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-        latch.await();
-        System.out.println("火箭发射成功!");
-        service.shutdown();
-
-    }
-
-
-    static final  Semaphore semaphore = new Semaphore(5);
-
-    public static void semaphore(){
-        ExecutorService service = Executors.newFixedThreadPool(20);
-        for (int i = 0; i < 20; i++) {
-
-
-            service.submit(new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        semaphore.acquire();
-                        Thread.sleep(1000);
-                        System.out.println(Thread.currentThread().getName()+" done!");//五个一组
-                        semaphore.release();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }));
-        }
-        service.shutdown();
-
-
-    }
 
 }
 

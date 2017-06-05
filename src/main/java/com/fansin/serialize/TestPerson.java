@@ -9,6 +9,7 @@ public class TestPerson implements Serializable, ObjectInputValidation {
 
     private static final long serialVersionUID = -1L;
 
+
 //    private static final long serialVersionUID = 8070621334146673048L;
 
     private String sex;

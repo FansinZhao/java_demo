@@ -25,7 +25,7 @@ public class CommandDemo {
     public static void main(String[] args) {
         System.out.println("------使用Executor-------");
         ExecutorService service = Executors.newFixedThreadPool(1);
-        service.execute(new Runnable() {
+        service.execute(new java.lang.Runnable() {
             @Override
             public void run() {
                 try {
@@ -36,7 +36,7 @@ public class CommandDemo {
                 System.out.println(Thread.currentThread().getName()+" runnable:执行业务处理1");
             }
         });
-        service.execute(new Runnable() {
+        service.execute(new java.lang.Runnable() {
             @Override
             public void run() {
                 System.out.println(Thread.currentThread().getName()+" runnable:执行业务处理2");

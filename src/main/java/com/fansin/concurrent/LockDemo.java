@@ -1,27 +1,87 @@
 package com.fansin.concurrent;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.StampedLock;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.*;
 
 /**
  * Created by zhaofeng on 17-4-4.
  */
-public class Locks {
+public class LockDemo {
+
+
 
 
     public static void main(String[] args) throws InterruptedException {
-        //重入锁
+        //排他 重入锁
         reentrylock();
 
-        //java8 新加锁
-        stamplock();
-
-        //可重入读写锁
+        //排他/共享 可重入读写锁
         reentrywriteread();
 
+        //共享锁
+        //信号量
+        semaphore();
+        //倒计时锁
+        countDownLatch();
+        //java8 新加锁
+        stamplock();
     }
+
+
+    static CountDownLatch latch = new CountDownLatch(10);
+    public static void countDownLatch() throws InterruptedException {
+        ExecutorService service = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < 10; i++) {
+            service.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep((new Random().nextInt(10))*1000);
+                        System.out.println(Thread.currentThread().getId() + "发射火箭准备完成....");
+                        latch.countDown();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        latch.await();
+        System.out.println("火箭发射成功!");
+        service.shutdown();
+
+    }
+
+
+    static final  Semaphore semaphore = new Semaphore(5);
+
+    public static void semaphore(){
+        ExecutorService service = Executors.newFixedThreadPool(20);
+        for (int i = 0; i < 20; i++) {
+
+
+            service.submit(new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        semaphore.acquire();
+                        Thread.sleep(1000);
+                        System.out.println(Thread.currentThread().getName()+" done!");//五个一组
+                        semaphore.release();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }));
+        }
+        service.shutdown();
+
+
+    }
+
 
     static ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     public static void reentrywriteread(){

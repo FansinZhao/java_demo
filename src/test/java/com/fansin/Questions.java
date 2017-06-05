@@ -25,6 +25,11 @@ public class Questions {
         Base base = new Sub();
     }
 
+    @Test
+    public void testStr(){
+        System.out.println("".substring(-1));
+    }
+
 }
 
 
