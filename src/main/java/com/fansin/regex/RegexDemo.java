@@ -1,17 +1,14 @@
 package com.fansin.regex;
 
-import com.fansin.reflect.B;
-import com.xiaoleilu.hutool.lang.Assert;
-import com.xiaoleilu.hutool.util.CollectionUtil;
-import com.xiaoleilu.hutool.util.RandomUtil;
-import com.xiaoleilu.hutool.util.ReUtil;
-import com.xiaoleilu.hutool.util.StrUtil;
 
-import javax.validation.constraints.AssertTrue;
-import java.io.*;
-import java.util.HashMap;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.RandomUtil;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -183,20 +180,20 @@ public class RegexDemo {
         pattern();
         System.out.println("去除驼峰标记");
 
-        System.out.println("smartReplace:"+ ReUtil.smartReplace(str,"(?<first>[A-Z])[a-z]\\k<first>",""));
+//        System.out.println("smartReplace:"+ ReUtil.smartReplace(str,"(?<first>[A-Z])[a-z]\\k<first>",""));
         pressTestSmartReplace();
     }
 
     public static void pressTestSmartReplace(){
-        String regex = "(?<first>[A-Z])[a-z]\\k<first>";
-        String replacement = "";
-        for (int i = 0; i < 10; i++) {
-            String result = ReUtil.smartReplace(randomString(),regex,replacement);
-            String validate = result.replaceFirst(regex,"$");
-            Assert.isTrue(result.equals(validate),"测试不通过!"+result);
-            assert result.equals(validate):"测试不通过!"+result;
-        }
-        System.out.println("测试通过!");
+//        String regex = "(?<first>[A-Z])[a-z]\\k<first>";
+//        String replacement = "";
+//        for (int i = 0; i < 10; i++) {
+//            String result = ReUtil.smartReplace(randomString(),regex,replacement);
+//            String validate = result.replaceFirst(regex,"$");
+//            Assert.isTrue(result.equals(validate),"测试不通过!"+result);
+//            assert result.equals(validate):"测试不通过!"+result;
+//        }
+//        System.out.println("测试通过!");
     }
 
     public static String randomString(){

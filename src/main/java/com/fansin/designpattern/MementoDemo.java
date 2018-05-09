@@ -1,6 +1,5 @@
 package com.fansin.designpattern;
 
-import com.xiaoleilu.hutool.util.BeanUtil;
 import lombok.Data;
 
 /**
@@ -23,7 +22,7 @@ public class MementoDemo {
         MessageCareTaker messageCareTaker = new MessageCareTaker();
         messageCareTaker.setMemento(messageOriginator.createMemento());
         System.out.println("经过一次请求,多个参数发生");
-        messageOriginator.setAmt(0l);
+        messageOriginator.setAmt(0L);
         //恢复备份
         messageOriginator.restoreMemento(messageCareTaker.getMemento());
         System.out.println("恢复后");

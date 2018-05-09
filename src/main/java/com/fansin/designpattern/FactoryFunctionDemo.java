@@ -1,7 +1,6 @@
 package com.fansin.designpattern;
 
 import com.alibaba.fastjson.JSONObject;
-import com.xiaoleilu.hutool.util.StrUtil;
 import lombok.Data;
 
 /**
@@ -110,7 +109,7 @@ abstract class TransStatisticsFactory{
     public TransStatistics postProcess(TransStatistics transStatistics){
         System.out.println("结果验证!");
         if (transStatistics == null){
-            return new TransStatistics(0l,0l,0l,0l);
+            return new TransStatistics(0L,0L,0L,0L);
         }else {
             return transStatistics;
         }

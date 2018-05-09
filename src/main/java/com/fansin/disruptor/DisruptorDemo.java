@@ -1,9 +1,9 @@
 package com.fansin.disruptor;
 
+import cn.hutool.core.date.TimeInterval;
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
-import com.xiaoleilu.hutool.date.TimeInterval;
 import lombok.Getter;
 import lombok.Setter;
 

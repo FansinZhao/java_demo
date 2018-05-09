@@ -1,7 +1,7 @@
 package com.fansin.designpattern;
 
 import com.alibaba.fastjson.JSONObject;
-import com.xiaoleilu.hutool.json.JSONUtil;
+import cn.hutool.json.JSONUtil;
 
 /**
  * Created by zhaofeng on 17-5-5.

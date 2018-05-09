@@ -1,6 +1,6 @@
 package com.fansin.designpattern;
 
-import com.xiaoleilu.hutool.util.CollectionUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import lombok.*;
 
 import java.util.ArrayList;

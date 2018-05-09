@@ -1,6 +1,6 @@
 package com.fansin.designpattern;
 
-import com.xiaoleilu.hutool.util.StrUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.Data;
 
 import java.util.*;

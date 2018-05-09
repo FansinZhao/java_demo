@@ -1,6 +1,7 @@
 package com.fansin.mysql;
 
-import com.xiaoleilu.hutool.date.TimeInterval;
+
+import cn.hutool.core.date.TimeInterval;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

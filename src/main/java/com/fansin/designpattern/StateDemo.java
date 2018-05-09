@@ -1,6 +1,6 @@
 package com.fansin.designpattern;
 
-import com.xiaoleilu.hutool.util.RandomUtil;
+import cn.hutool.core.util.RandomUtil;
 import lombok.Data;
 
 /**

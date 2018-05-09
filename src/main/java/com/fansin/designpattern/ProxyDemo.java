@@ -1,9 +1,9 @@
 package com.fansin.designpattern;
 
-import com.xiaoleilu.hutool.aop.ProxyUtil;
-import com.xiaoleilu.hutool.aop.aspects.TimeIntervalAspect;
-import com.xiaoleilu.hutool.date.DateUtil;
-import com.xiaoleilu.hutool.date.TimeInterval;
+import cn.hutool.aop.ProxyUtil;
+import cn.hutool.aop.aspects.TimeIntervalAspect;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.TimeInterval;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;

@@ -1,6 +1,7 @@
 package com.fansin.escapeAnalysis;
 
-import com.xiaoleilu.hutool.lang.Assert;
+
+import cn.hutool.core.lang.Assert;
 
 /**
  * Created by zhaofeng on 17-5-8.

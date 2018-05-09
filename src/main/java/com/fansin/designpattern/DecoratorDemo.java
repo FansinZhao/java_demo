@@ -1,7 +1,6 @@
 package com.fansin.designpattern;
 
-import com.xiaoleilu.hutool.util.ArrayUtil;
-import com.xiaoleilu.hutool.util.StrUtil;
+import cn.hutool.core.util.StrUtil;
 
 import java.util.Map;
 import java.util.Properties;
